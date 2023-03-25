@@ -91,7 +91,7 @@ struct UploadedJobDescriptionViewController: View {
 extension SwiftUIViewJobDescriptionUploadPopUp {
     func makeAPICall() {
         let url = URL(string: "https://api.openai.com/v1/completions")!
-        let domainKey = "" //PUT DOMAIN KEY HERE //make the domain key a environment variable. (to hide when pushing to git)
+        let domainKey = "" ///PUT DOMAIN KEY HERE //make the domain key a environment variable. (to hide when pushing to git)
         let headers = ["Content-Type": "application/json",
                        "Authorization": "Bearer " + domainKey]
         let data = ["model": "text-davinci-003",//text-curie-001 USE THIS INSTEAD
