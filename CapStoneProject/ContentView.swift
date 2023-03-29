@@ -8,18 +8,13 @@
 
 import SwiftUI
 
-    
     struct ContentView: View {
     
         @State private var isJobDescriptionUploadPresented = false
         @State private var isResumeUploadPresented = false
     
-    
         var body: some View {
             NavigationView {
-    
-    
-    
     
                 VStack{
                     Image("Untitled design")

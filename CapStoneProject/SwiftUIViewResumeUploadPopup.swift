@@ -14,6 +14,7 @@ struct SwiftUIViewResumeUploadPopup: View {
     @State private var resumeUploadTextView = ""
     @State private var savedResumeUploadText = ""
     @State private var isSaved = false
+ 
     
     
     var body: some View {

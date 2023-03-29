@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct SwiftUIViewJobDescriptionUploadPopUp: View {
     @State private var jobDescriptionUploadTextView = ""
     @State private var savedJobDescriptionUploadText = ""
@@ -14,15 +15,30 @@ struct SwiftUIViewJobDescriptionUploadPopUp: View {
 
     @State private var isLoading = false
     @State private var extractedKeywords = ""
-
+    @State private var apiCallCompleted = false // track whether the API call has been completed
 
     var body: some View {
         NavigationView {
             VStack {
                 TextEditor(text: $jobDescriptionUploadTextView)
                     .background(Color(red: 218/255, green: 205/255, blue: 205/255))
-
+                
                 Spacer()
+                
+                //Removed Code
+//
+//                if apiCallCompleted == true{ // show the "Next" button after the API call is completed
+//
+//                    NavigationLink(
+//                        destination: SwiftUIViewResumeUploadPopup(),
+//                        label: {
+//                            Text("RESUME")
+//                        }
+//                    )
+//
+//                }
+                
+                //Removed code
             }
             .navigationTitle("Job Description Upload")
             .toolbar {
@@ -74,6 +90,7 @@ struct SwiftUIViewJobDescriptionUploadPopup_Previews: PreviewProvider {
 
 
 struct UploadedJobDescriptionViewController: View {
+    @State private var apiCallCompleted = false // track whether the API call has been completed
     let jobDescription: String
     let extractedKeywords: String // add this property to hold the extracted keywords
 
@@ -81,9 +98,21 @@ struct UploadedJobDescriptionViewController: View {
         VStack {
             Text("Job Description: \(jobDescription)")
             Text("Extracted Keywords: \(extractedKeywords)")
+                .bold()
+            
+            if apiCallCompleted { // show the "Next" button if the API call is completed
+                            NavigationLink(
+                                destination: SwiftUIViewResumeUploadPopup(),
+                                label: {
+                                    Text("Upload Resume")
+                                }
+                            )
+                        }
 
             }
-
+        .padding(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
+        
+        
         }
     }
 
@@ -91,15 +120,18 @@ struct UploadedJobDescriptionViewController: View {
 extension SwiftUIViewJobDescriptionUploadPopUp {
     func makeAPICall() {
         let url = URL(string: "https://api.openai.com/v1/completions")!
-        let domainKey = "" ///PUT DOMAIN KEY HERE //make the domain key a environment variable. (to hide when pushing to git)
+        let domainKey = "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" ///PUT DOMAIN KEY HERE //make the domain key a environment variable. (to hide when pushing to git)
         let headers = ["Content-Type": "application/json",
                        "Authorization": "Bearer " + domainKey]
-        let data = ["model": "text-davinci-003",//text-curie-001 USE THIS INSTEAD
+//        let data = ["model": "text-curie-001",
+//                    "prompt": "Extract the keywords from the following job description text:\n\(jobDescriptionUploadTextView)",
+//                    "max_tokens": 30,
+//                    "temperature": 0, //try 0 to get more reliable
+//                    "n": 2
+        let data = ["model": "text-davinci-003",
                     "prompt": "Extract the keywords from the following job description text:\n\(jobDescriptionUploadTextView)",
-                    "max_tokens": 30,
-                    "temperature": 1,
-                    "n": 1
-//                    "stop": ["\n"]
+                    "max_tokens": 256,
+                    "temperature": 0.2
         ] as [String : Any]
 
         let jsonData = try! JSONSerialization.data(withJSONObject: data, options: [])
@@ -119,7 +151,10 @@ extension SwiftUIViewJobDescriptionUploadPopUp {
                 let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
                 if let choices = json?["choices"] as? [[String: Any]], let text = choices.first?["text"] as? String {
                     DispatchQueue.main.async {
-                        self.extractedKeywords = text
+                        self.extractedKeywords = text// extract first part "extracted keywords" then parce the other words to csv. (comma separated value) should make it an array to compare from resume
+                        self.apiCallCompleted = true
+                        
+          
                     }
                 } else {
                     print("\(json)")
@@ -130,6 +165,7 @@ extension SwiftUIViewJobDescriptionUploadPopUp {
 
         }.resume()
     }
+
 }
 
 
