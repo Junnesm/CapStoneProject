@@ -4,61 +4,74 @@
 //
 //  Created by Junne Murdock on 3/6/23.
 //RESUMATE
+//THIS IS THE FINAL APP. DO NOT LOOK AT THE OTHERS 
 
 
 import SwiftUI
+import Foundation
+
+import SwiftUI
+import Foundation
 
     struct ContentView: View {
     
         @State private var isJobDescriptionUploadPresented = false
         @State private var isResumeUploadPresented = false
+        @State private var extractedKeywords: [String] = []
+        @EnvironmentObject var keywordStore: KeywordStore
     
         var body: some View {
             NavigationView {
-    
+
+                
                 VStack{
-                    Image("Untitled design")
+                    Image("Blue Gradient Login Page Wireframe Mobile Prototype")
                                  .resizable()
                                  .aspectRatio(contentMode: .fill)
-                                 .frame(height: 200)
+                                 
                                  .overlay(
-                                    Text("Welcome! Let's find your opportunities")
-                                        .font(.title)
-                                    //  .font(Font.custom("Antic", size: 24))
+                                    Text("Let's get started. Find your MATCH")
+                                        .font(.custom("Helvetica-Bold", size: 32))
                                         .bold()
                                         .foregroundColor(.black)
+                                        .padding(.horizontal, 5)
+                                        .padding(.top, -275)
                                                    )
                                  .edgesIgnoringSafeArea(.top)
+                                 .edgesIgnoringSafeArea(.bottom)
+                                 
                     HStack {
                         // Button to present the upload view controller
                         Button(action: {
                             self.isJobDescriptionUploadPresented = true
                         }) {
-                            Image("JobDescriptionUploadButton")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 500, height: 400)
-                                .shadow(color: .gray, radius: 4, x: 0, y: 2)
-                        }
+                            
+                            HStack {
+                                Image(systemName: "plus.circle")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 50, height: 50)
+                                    
+                                
+                                Text(" Upload Job Description")
+                            }
+//
+                                                        .foregroundColor(.black)
+                                                        .fontWeight(.bold)
+                                                        .font(.custom("Helvetica-Bold", size: 25))
+                                                        .padding()
+                                                        .frame(width: 400, height: 100)
+                                                        .background(Color(red: 169/225, green: 214/255, blue: 220/255)
+                                                        .cornerRadius(40)
+                                                        .shadow(color: .gray, radius: 7, x: 0, y: 5)
+                                                                    )
                         
-                       
-    
-    
-                        // Button with image to present another view controller
-    //                    Button(action: {
-    //                        self.isResumeUploadPresented = true
-    //                    }) {
-    //                        Image("ResumeUploadButton")
-    //                            .resizable()
-    //                            .aspectRatio(contentMode: .fit)
-    //                    }
+                                                        
+                                                }
+
                     }
-                    .offset(y: -230)
-                    List {
-                                        Text("Job Ad 1")
-                                        Text("Ziprecruiter")
-                                        Text("Your Mom")
-                                    }
+                    .offset(y: -150)
+//
     
                                 }
                     // Navigation links to the upload and resume view controllers
@@ -67,16 +80,21 @@ import SwiftUI
                         SwiftUIViewJobDescriptionUploadPopUp()
                     }
                     .sheet(isPresented: $isResumeUploadPresented) {
+                        //MARK: Have initializer take array of keywords
                         SwiftUIViewResumeUploadPopup()
+                    }
+//
+                    
                     }
     
                 }
+
             }
             struct ContentView_Previews: PreviewProvider {
                 static var previews: some View {
                     ContentView()
                 }
             }
-        }
+        
     
 
