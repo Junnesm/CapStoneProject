@@ -4,9 +4,9 @@
 //
 //  Created by Junne Murdock on 3/13/23.
 
-
 import SwiftUI
 import Foundation
+
 
 class KeywordStore: ObservableObject {
     @Published var descriptionKeywords: [String] = []
@@ -41,6 +41,7 @@ struct SwiftUIViewJobDescriptionUploadPopUp: View {
                                         RoundedRectangle(cornerRadius: 8)
                                             .stroke(Color.gray, lineWidth: 2)
                                     }
+                                .ignoresSafeArea()
                        )
                 Spacer()
             }
@@ -54,7 +55,7 @@ struct SwiftUIViewJobDescriptionUploadPopUp: View {
 
                         // Simulate a delay to show the loading animation
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            // Handle save button tap here
+                           
                             savedJobDescriptionUploadText = jobDescriptionUploadTextView
                             isSaved = true
                             isLoading = false
@@ -63,8 +64,8 @@ struct SwiftUIViewJobDescriptionUploadPopUp: View {
                             makeAPICall()
                         }
                     }) {
-                        Text("Next")
-                            .font(.custom("Helvetica-Bold", size: 15))
+                        Text("See Keywords")
+                            .font(.custom("Helvetica-Bold", size: 20))
                             .foregroundColor(.black)
 
                     }
@@ -93,6 +94,7 @@ struct SwiftUIViewJobDescriptionUploadPopUp: View {
 struct SwiftUIViewJobDescriptionUploadPopup_Previews: PreviewProvider {
     static var previews: some View {
         SwiftUIViewJobDescriptionUploadPopUp()
+        
     }
 }
 
@@ -115,13 +117,15 @@ struct UploadedJobDescriptionViewController: View {
 //                .padding(.top, 300)
 //
             if apiCallCompleted { // show the "Next" button if the API call is completed
-                            NavigationLink(
+                NavigationLink( //COPY THIS move this
                                 destination: SwiftUIViewResumeUploadPopup(),
                                 label: {
                                     Text("Upload Resume")
-                                        .font(.custom("Helvetica-Bold", size: 15))
+                                        .font(.custom("Helvetica-Bold", size: 20))
                                         .bold()
+                                        .foregroundColor(.black)
                                 }
+                                
                             )
                         }
 
@@ -136,7 +140,7 @@ struct UploadedJobDescriptionViewController: View {
 extension SwiftUIViewJobDescriptionUploadPopUp {
     func makeAPICall() {
         let url = URL(string: "https://api.openai.com/v1/completions")!
-        let domainKey = "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" ///PUT DOMAIN KEY HERE //make the domain key a environment variable. (to hide when pushing to git)
+        let domainKey = "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" ///PUT DOMAIN KEY HERE //make the domain key a environment variable. (to hide when pushing to git)
         let headers = ["Content-Type": "application/json",
                        "Authorization": "Bearer " + domainKey]
 
@@ -169,7 +173,9 @@ extension SwiftUIViewJobDescriptionUploadPopUp {
           
                     }
                 } else {
-                    print("\(json)")
+                    print("\(String(describing: json))")
+//                } else {
+//                    print("\(json)") USE THIS IF THE APP DOESNT WORK
                 }
             } catch {
                 print("Error decoding response: \(error.localizedDescription)")

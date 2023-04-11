@@ -10,15 +10,15 @@ import NaturalLanguage
 import Foundation
 
 struct SwiftUIViewResumeUploadPopup: View {
-    
-
     @State private var resumeUploadTextView = ""
     @State private var savedResumeUploadText: [String] = []
     @State private var isSaved = false
     @State private var similarity: Double = 0
     @EnvironmentObject var keywordStore: KeywordStore
+    
+    
     var body: some View {
-        NavigationView {
+//        NavigationView {
             
             VStack {
                 TextEditor(text: $resumeUploadTextView)
@@ -32,27 +32,48 @@ struct SwiftUIViewResumeUploadPopup: View {
                                         RoundedRectangle(cornerRadius: 8)
                                             .stroke(Color.gray, lineWidth: 1)
                                     }
-                       )
+                                .ignoresSafeArea()
+                    )
                 Spacer()
             }
             .navigationTitle("Resume Upload")
+//            .navigationBarTitleDisplayMode(.automatic)
+            .font(.custom("Helvetica-Bold", size: 40))
+//            .foregroundColor(.black)
             
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    Spacer()
+                }
+
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button(action: {
-                        keywordStore.savedResumeUploadText = resumeUploadTextView.components(separatedBy: " ") //add what else might need to be added to separate
-                        // Calculate similarity between entered text and extracted keywords
-                         similarity = calculateSimilarity(text: keywordStore.savedResumeUploadText, extractedKeywords: keywordStore.descriptionKeywords)
-                        
-                        // Handle save button tap here
-                       
+                        keywordStore.savedResumeUploadText = resumeUploadTextView.components(separatedBy: " ")
+                        similarity = Double(calculateSimilarity(text: keywordStore.savedResumeUploadText, extractedKeywords: keywordStore.descriptionKeywords))
                         isSaved = true
                     }) {
-                        Text("Calculate")
+                        Text("Calculate Match")
+                            .font(.custom("Helvetica-Bold", size: 20))
+                            .foregroundColor(.black)
                     }
-                    
                 }
             }
+
+//            .toolbar {
+//                ToolbarItemGroup(placement: .navigationBarLeading) {
+//                    Button(action: {
+//                        keywordStore.savedResumeUploadText = resumeUploadTextView.components(separatedBy: " ")
+//                        similarity = Double(calculateSimilarity(text: keywordStore.savedResumeUploadText, extractedKeywords: keywordStore.descriptionKeywords))
+//
+//                        isSaved = true
+//                    }) {
+//                        Text("Calculate")
+//                            .font(.custom("Helvetica-Bold", size: 15))
+//                            .foregroundColor(.black)
+//                    }
+//
+//                }
+//            }
             .onDisappear(){
                 if isSaved {
                 }
@@ -65,7 +86,7 @@ struct SwiftUIViewResumeUploadPopup: View {
                             EmptyView()
                         })
         }
-    }
+      
 }
 
 struct UploadedResumeViewController: View {
@@ -75,19 +96,27 @@ struct UploadedResumeViewController: View {
     var body: some View {
         VStack {
             Text("Resume: \(resume)")
-            Text("Similarity score: \(String(similarity))")
+            Text("Similarity score: \(formatPercentage(similarityPercentage: Int(similarity)))")
         }
     }
 }
 
-func calculateSimilarity(text: [String], extractedKeywords: [String]) -> Double {
-
+func calculateSimilarity(text: [String], extractedKeywords: [String]) -> Int {
     let textTokens = tokenize(text.joined(separator: " "))
     let keywordTokens = tokenize(extractedKeywords.joined(separator: " "))
     let overlap = Set(textTokens).intersection(Set(keywordTokens))
-    let similarity = Double(overlap.count) / Double(textTokens.count)
-    return similarity
-    
+
+    // Find words in "text" that are also in extracted keywords
+    let relevantTextTokens = textTokens.filter { keywordTokens.contains($0) }
+
+    let similarity = Double(overlap.count) / Double(relevantTextTokens.count)
+    let similarityPercentage = Int(similarity * 100.0)
+
+    return similarityPercentage
+
+}
+func formatPercentage(similarityPercentage: Int) -> String {
+    return "\(similarityPercentage)%"
 }
 
 func tokenize(_ text: String) -> [String] {
@@ -96,3 +125,4 @@ func tokenize(_ text: String) -> [String] {
     let tokens = tokenizer.tokens(for: text.startIndex..<text.endIndex)
     return tokens.map { String(text[$0]) }
 }
+

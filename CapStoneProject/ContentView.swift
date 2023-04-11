@@ -10,9 +10,6 @@
 import SwiftUI
 import Foundation
 
-import SwiftUI
-import Foundation
-
     struct ContentView: View {
     
         @State private var isJobDescriptionUploadPresented = false
@@ -24,11 +21,13 @@ import Foundation
             NavigationView {
 
                 
-                VStack{
+                ZStack{ // put in zstack for image, vstack for the text over the zstack. the a spacer then an hstack.
                     Image("Blue Gradient Login Page Wireframe Mobile Prototype")
                                  .resizable()
+                                 .frame(minWidth: 0, minHeight: 0)
                                  .aspectRatio(contentMode: .fill)
                                  
+                    
                                  .overlay(
                                     Text("Let's get started. Find your MATCH")
                                         .font(.custom("Helvetica-Bold", size: 32))
@@ -38,9 +37,10 @@ import Foundation
                                         .padding(.top, -275)
                                                    )
                                  .edgesIgnoringSafeArea(.top)
+                    Spacer()
                                  .edgesIgnoringSafeArea(.bottom)
                                  
-                    HStack {
+                    VStack {
                         // Button to present the upload view controller
                         Button(action: {
                             self.isJobDescriptionUploadPresented = true
@@ -63,14 +63,14 @@ import Foundation
                                                         .frame(width: 400, height: 100)
                                                         .background(Color(red: 169/225, green: 214/255, blue: 220/255)
                                                         .cornerRadius(40)
-                                                        .shadow(color: .gray, radius: 7, x: 0, y: 5)
+//                .shadow(color: .gray, radius: 7, x: 0, y: 5)
                                                                     )
                         
                                                         
                                                 }
 
                     }
-                    .offset(y: -150)
+                    .offset(y: 350)
 //
     
                                 }
